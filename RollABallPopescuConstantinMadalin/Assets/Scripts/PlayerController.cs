@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour
 {
 
     public float speed;
+    public float force;
     public TextMeshProUGUI countText;
     public GameObject winTextObject;
 
@@ -28,9 +29,18 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        Vector3 movement = new Vector3(movementX, 0.0f, movementY);
+        var movement = new Vector3(movementX, 0.0f, movementY);
 
         rb.AddForce(movement * speed);
+    }
+
+    void Update()
+    {
+        Debug.Log($"cout: {count} \n velocity: {rb.velocity.y}\n");
+        if (Input.GetKeyDown(KeyCode.Space) && rb.velocity.y == 0)
+        {
+            rb.AddForce(Vector3.up * force, ForceMode.Impulse);
+        }
     }
 
     void OnTriggerEnter(Collider other)
@@ -39,7 +49,7 @@ public class PlayerController : MonoBehaviour
         {
             other.gameObject.SetActive(false);
 
-            count = count + 1;
+            count += 1;
 
             SetCountText();
         }
@@ -57,7 +67,7 @@ public class PlayerController : MonoBehaviour
     {
         countText.text = "Count: " + count.ToString();
 
-        if (count >= 12)
+        if (count >= 25)
         {
             winTextObject.SetActive(true);
         }
