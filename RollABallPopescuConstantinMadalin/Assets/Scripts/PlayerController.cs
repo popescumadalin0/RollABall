@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
+using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 public class PlayerController : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class PlayerController : MonoBehaviour
     public float force;
     public TextMeshProUGUI countText;
     public GameObject winTextObject;
+    public Transform camera;
 
     private float movementX;
     private float movementY;
@@ -29,14 +31,26 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        var movement = new Vector3(movementX, 0.0f, movementY);
-
-        rb.AddForce(movement * speed);
+        if (Input.GetKey(KeyCode.D))
+        {
+            rb.AddForce(new Vector3(camera.right.x, 0, camera.right.z).normalized * speed);
+        }
+        if (Input.GetKey(KeyCode.W))
+        {
+            rb.AddForce(new Vector3(camera.forward.x, 0, camera.forward.z).normalized * speed);
+        }
+        if (Input.GetKey(KeyCode.A))
+        {
+            rb.AddForce(new Vector3(camera.right.x, 0, camera.right.z).normalized * (-speed));
+        }
+        if (Input.GetKey(KeyCode.S))
+        {
+            rb.AddForce(new Vector3(camera.forward.x, 0, camera.forward.z).normalized * (-speed));
+        }
     }
 
     void Update()
     {
-        Debug.Log($"cout: {count} \n velocity: {rb.velocity.y}\n");
         if (Input.GetKeyDown(KeyCode.Space) && rb.velocity.y == 0)
         {
             rb.AddForce(Vector3.up * force, ForceMode.Impulse);
@@ -53,14 +67,6 @@ public class PlayerController : MonoBehaviour
 
             SetCountText();
         }
-    }
-
-    void OnMove(InputValue value)
-    {
-        Vector2 v = value.Get<Vector2>();
-
-        movementX = v.x;
-        movementY = v.y;
     }
 
     void SetCountText()
